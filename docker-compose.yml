@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  llm:
+    build:
+      context: ./Services/LLM
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      PYTHONUNBUFFERED: 1
+    ports:
+      - 11435:11434     # host:container (Ollama)
+    tty: true
+
+  mcp:
+    build:
+      context: ./Services/MCP
+      dockerfile: Dockerfile
+    env_file:
+      - ./Services/MCP/.env
+    depends_on:
+      - llm
+    ports:
+      - 3001:3000       # host:container (MCP)
+    restart: unless-stopped
